@@ -25,9 +25,11 @@
 
         body {
             font-family: 'Work Sans', sans-serif;
-            background: var(--bg-primary);
+            background: transparent;
             color: var(--text-primary);
             line-height: 1.6;
+            padding: 0;
+            margin: 0;
         }
 
         .hero {
@@ -68,9 +70,9 @@
         /* ---- MATRIX WRAPPER ---- */
         .matrix-wrapper {
             background: white;
-            border-radius: 12px;
+            border-radius: 0;
             padding: 1.5rem;
-            box-shadow: 0 4px 16px var(--shadow);
+            box-shadow: none;
             overflow: hidden;
             scrollbar-width: thin;
             scrollbar-color: #ccc transparent;
@@ -483,18 +485,7 @@
 </head>
 <body>
 
-<div class="hero">
-    <h1>Australian Dangerous Goods Storage Explorer</h1>
-    <p class="subtitle">Click any row or column header to view class details and label. Click any cell for compatibility requirements.</p>
-</div>
-
-<div class="container">
-
-    <div class="info-banner">
-        <strong>Note:</strong> Based on AS/NZS 3833:2007 and the Australian Dangerous Goods Code (ADG Code) Edition 7.4. Always consult the SDS for specific chemicals. This tool is educational and not a substitute for professional safety advice.
-    </div>
-
-    <div class="matrix-wrapper" id="matrixWrapper">
+<div class="matrix-wrapper" id="matrixWrapper">
         <div class="matrix-scale-container" id="matrixScaleContainer">
         <div class="matrix-legend">
             <div class="legend-item">
@@ -526,13 +517,6 @@
 
         <table class="matrix-table" id="compatibilityMatrix"></table>
         </div><!-- end matrix-scale-container -->
-    </div>
-
-    <div class="refs">
-        <strong>References:</strong> Australian Dangerous Goods Code (ADG Code) Edition 7.4 &nbsp;|&nbsp; AS/NZS 3833:2007 Storage and Handling of Mixed Classes of Dangerous Goods &nbsp;|&nbsp; AS/NZS 4332-2004 Gas Cylinder Segregation &nbsp;|&nbsp; Work Health and Safety Regulations &nbsp;|&nbsp;
-        <a href="https://www.safeworkaustralia.gov.au" target="_blank">www.safeworkaustralia.gov.au</a>
-    </div>
-
 </div>
 
 <div class="modal-overlay" id="modal" onclick="closeModalOnOverlay(event)">
