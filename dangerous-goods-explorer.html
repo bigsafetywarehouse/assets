@@ -71,7 +71,18 @@
             border-radius: 12px;
             padding: 1.5rem;
             box-shadow: 0 4px 16px var(--shadow);
-            overflow-x: auto;
+            overflow: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc transparent;
+        }
+
+        .matrix-wrapper::-webkit-scrollbar { height: 6px; }
+        .matrix-wrapper::-webkit-scrollbar-track { background: transparent; }
+        .matrix-wrapper::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+        .matrix-scale-container {
+            transform-origin: top left;
+            /* width/height and scale set dynamically by JS */
         }
 
         .matrix-legend {
@@ -248,12 +259,19 @@
             padding: 2rem;
             max-width: 700px;
             width: 100%;
-            max-height: 90vh;
+            max-height: 85vh;
             overflow-y: auto;
+            overflow-x: hidden;
             position: relative;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             animation: modalIn 0.18s ease;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc transparent;
         }
+
+        .modal::-webkit-scrollbar { width: 6px; }
+        .modal::-webkit-scrollbar-track { background: transparent; }
+        .modal::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 
         @keyframes modalIn {
             from { opacity: 0; transform: scale(0.95); }
@@ -476,7 +494,8 @@
         <strong>Note:</strong> Based on AS/NZS 3833:2007 and the Australian Dangerous Goods Code (ADG Code) Edition 7.4. Always consult the SDS for specific chemicals. This tool is educational and not a substitute for professional safety advice.
     </div>
 
-    <div class="matrix-wrapper">
+    <div class="matrix-wrapper" id="matrixWrapper">
+        <div class="matrix-scale-container" id="matrixScaleContainer">
         <div class="matrix-legend">
             <div class="legend-item">
                 <div class="legend-color" style="background:var(--separate)"></div>
@@ -506,6 +525,7 @@
         </div>
 
         <table class="matrix-table" id="compatibilityMatrix"></table>
+        </div><!-- end matrix-scale-container -->
     </div>
 
     <div class="refs">
@@ -1072,6 +1092,47 @@
 
     // ---- INIT ----
     createMatrix();
+
+    // ---- AUTO-SCALE TABLE TO FIT WRAPPER (no scrollbar) ----
+    (function() {
+        const wrapper   = document.getElementById('matrixWrapper');
+        const container = document.getElementById('matrixScaleContainer');
+        let rafId = null;
+
+        function scaleToFit() {
+            // Reset scale so we can measure natural size
+            container.style.transform   = '';
+            container.style.marginBottom = '';
+
+            const naturalW  = container.scrollWidth;
+            const available = wrapper.clientWidth - 48; // 1.5rem padding each side = 48px total
+
+            if (naturalW > available && available > 0) {
+                const scale = available / naturalW;
+                container.style.transform       = `scale(${scale})`;
+                container.style.transformOrigin = 'top left';
+                container.style.marginBottom    = ((container.scrollHeight * scale) - container.scrollHeight) + 'px';
+            }
+        }
+
+        function scheduleScale() {
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(() => {
+                rafId = null;
+                scaleToFit();
+            });
+        }
+
+        // Run after matrix renders
+        setTimeout(scaleToFit, 50);
+
+        // Re-run on resize
+        if (window.ResizeObserver) {
+            new ResizeObserver(scheduleScale).observe(wrapper);
+        } else {
+            window.addEventListener('resize', scheduleScale);
+        }
+    })();
 
 </script>
 </body>
