@@ -1113,6 +1113,12 @@
                 container.style.transformOrigin = 'top left';
                 container.style.marginBottom    = ((container.scrollHeight * scale) - container.scrollHeight) + 'px';
             }
+
+            // Tell parent iframe our rendered height
+            requestAnimationFrame(() => {
+                const h = document.documentElement.scrollHeight;
+                window.parent.postMessage({ type: 'dg-explorer-height', height: h }, '*');
+            });
         }
 
         function scheduleScale() {
